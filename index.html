@@ -52,12 +52,13 @@ interact('.sibling').draggable({
     height: 50px; */
     background-color: black;
     color: white;
-    /* position: absolute; */
+    position: absolute;
     line-height: 50px;
     padding: 5px 15px;
     text-align: center;
     display: inline-block;
     margin: 10px;
+transition: all 2.0s;
 }
 
   </style>
@@ -227,6 +228,22 @@ interact('.sibling').draggable({
       jumpCount++;
     }, 20);
   }
+
+
+var random3 = Math.floor(Math.random() * 10);
+function moving(){
+var random1 = Math.floor(Math.random() * 1000);
+var random2 = Math.floor(Math.random() * 1000);
+
+
+$('.sibling:nth-child('+random3+')').css('top',random2+'px');
+
+$('.sibling:nth-child('+random3+')').css('left',random1+'px');
+}
+setInterval(moving,2000);
+
+
+
 });
 
 
