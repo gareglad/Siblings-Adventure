@@ -60,10 +60,36 @@ interact('.sibling').draggable({
     margin: 10px;
 transition: all 2.0s;
 }
+.obstacle{
+width: 40px;
+height: 40px;
+background: black;
+position: absolute;
+}
+
+#highscores {
+position: absolute;
+top: 20px;
+left: 20px;
+}
 
   </style>
 </head>
 <body class="d-flex d-flex justify-content-center align-items-center align-self-center">
+<div id="highscores">
+ <div> Dad: <span id="Dad">0</span> </div>
+ <div> Mom: <span id="Mom">0</span> </div>
+ <div> Dovid: <span id="Dovid">0</span> </div>
+ <div> Shuey: <span id="Shuey">0</span> </div>
+ <div> Rivky: <span id="Rivky">0</span> </div>
+ <div> Devorie: <span id="Devorie">0</span> </div>
+ <div> Gershon: <span id="Gershon">0</span> </div>
+ <div> Moshe: <span id="Moshe">0</span> </div>
+ <div> Shimmy: <span id="Shimmy">0</span> </div>
+<div> Zalmy: <span id="Zalmy">0</span> </div>
+
+
+</div>
   <div id="game-container" class="">
     <!-- Game elements will be dynamically created here -->
   </div>
@@ -72,6 +98,83 @@ transition: all 2.0s;
   <script src="game.js"></script>
   <script>
    $(document).ready(function() {
+
+function addRandomObstacle() {
+        
+                var obstacle = $('<div class="obstacle"></div>');
+                console.log(Math.random() * 95);
+                var ran = Math.random() * 95;
+                if(ran < 6){
+                    ran = 6;
+                } 
+                obstacle.css('top', ran + '%'); // Adjust the range as needed
+                obstacle.css('left', Math.random() * 95 + '%'); // Adjust the range as needed
+                $('body').append(obstacle);
+            
+      }
+
+var x3 = 5;
+while(x3>0){
+addRandomObstacle();
+x3--;
+}
+
+
+function box_collision() {
+                var div = $('.moving');
+                var div1top1 = parseInt(div.css('top'));
+                var div1left1 = parseInt(div.css('left'));
+                var div1Width = div.width();
+                var div1Height = div.height();
+                $('.obstacle').each(function () {
+                    var obstacle = $(this);
+                    var obstacleTop = obstacle.position().top;
+                    var obstacleLeft = obstacle.position().left;
+                    var obstacleWidth = obstacle.width();
+                    var obstacleHeight = obstacle.height();
+
+                    if (
+                        div1top1 + div1Height > obstacleTop &&
+                        div1top1 < obstacleTop + obstacleHeight &&
+                        div1left1 + div1Width > obstacleLeft &&
+                        div1left1 < obstacleLeft + obstacleWidth
+                    ) {
+                        console.log('!');
+                        $(this).remove();
+                        //var score = parseInt($('.score').html());
+                        //score++;
+                        //$('.score').html(score);
+
+add_score();
+addRandomObstacle();
+
+                    }
+                });
+            }
+            
+
+function add_score() {
+
+
+var name = $('.moving').data('name');
+console.log(name);
+
+var score = parseInt($('#'+name).html());
+console.log(score);
+
+var new_score = score + 1;
+console.log(new_score);
+
+$('#'+name).text(new_score);
+
+localStorage.setItem(name,new_score);
+
+}
+
+
+
+
+
   var siblings = [
     {
       name: "Dad",
@@ -121,7 +224,7 @@ transition: all 2.0s;
     }
     ,
     {
-      name: "Deverie",
+      name: "Devorie",
       ability: "Object Manipulation",
       positionX: 550,
       positionY: 300,
@@ -171,7 +274,12 @@ transition: all 2.0s;
   ];
 
   for (var i = 0; i < siblings.length; i++) {
-    var $sibling = $("<div class='sibling'>")
+if(localStorage.getItem(siblings[i].name)){
+ $('#'+siblings[i].name).text(localStorage.getItem(siblings[i].name));
+}else{
+$('#'+siblings[i].name).text('0');
+}
+    var $sibling = $("<div class='sibling' data-name='"+siblings[i].name+"'>")
                     .text(siblings[i].name)
                     .css({
                       left: siblings[i].positionX + "px",
@@ -231,18 +339,26 @@ transition: all 2.0s;
 
 
 var random3 = Math.floor(Math.random() * 10);
+$('.sibling:nth-child('+random3+')').addClass('moving');
+
 function moving(){
-var random1 = Math.floor(Math.random() * 1000);
-var random2 = Math.floor(Math.random() * 1000);
+var random1 = Math.floor(Math.random() * $(window).width() - $(".moving").width());
+var random2 = Math.floor(Math.random() *  $(window).height() - $(".moving").height());
 
 
 $('.sibling:nth-child('+random3+')').css('top',random2+'px');
 
 $('.sibling:nth-child('+random3+')').css('left',random1+'px');
+
+
+
 }
 setInterval(moving,2000);
 
 
+
+//add_score();
+setInterval(box_collision, 50);
 
 });
 
